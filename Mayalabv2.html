@@ -1,0 +1,1202 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MAYALAB — I.E. Antonio Nariño · El Morro, Yopal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@400;600;700&family=Nunito:ital,wght@0,300;0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --terra:      #8B2E00;
+  --terra-2:    #C04A10;
+  --maiz:       #D4922A;
+  --maiz-light: #F2C14E;
+  --jade:       #1E6B47;
+  --jade-2:     #2B9962;
+  --jade-glow:  #44D895;
+  --noche:      #0C0E16;
+  --noche-2:    #131720;
+  --noche-3:    #1B2235;
+  --stone:      #252D40;
+  --text:       #EDE8DF;
+  --muted:      #7A859A;
+  --fire:       #E85530;
+  --xib:        #5B2A8C;
+  --xib-glow:   #A855F7;
+  --r:          14px;
+  --glow-jade:  0 0 30px rgba(68,216,149,.18);
+  --glow-maiz:  0 0 30px rgba(212,146,42,.28);
+  --glow-xib:   0 0 30px rgba(168,85,247,.2);
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+
+body {
+  font-family:'Nunito',sans-serif;
+  background:var(--noche);
+  color:var(--text);
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+/* grain */
+body::before{
+  content:'';position:fixed;inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.03'/%3E%3C/svg%3E");
+  pointer-events:none;z-index:0;
+}
+
+/* ──────────────────────────────
+   VIEWS
+────────────────────────────── */
+.view{display:none;min-height:100vh;position:relative;z-index:1;flex-direction:column}
+.view.active{display:flex}
+
+/* ──────────────────────────────
+   DEMO NAV
+────────────────────────────── */
+#demoNav{
+  position:fixed;top:0;left:0;right:0;z-index:9999;
+  background:rgba(12,14,22,.97);
+  border-bottom:1px solid rgba(212,146,42,.2);
+  display:flex;overflow-x:auto;padding:7px 10px;gap:5px;
+  backdrop-filter:blur(14px);
+  scrollbar-width:none;
+}
+#demoNav::-webkit-scrollbar{display:none}
+.dtab{
+  white-space:nowrap;padding:5px 12px;border-radius:20px;
+  font-size:10px;font-weight:700;letter-spacing:.8px;cursor:pointer;
+  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);
+  color:var(--muted);transition:all .2s;font-family:'Nunito',sans-serif;
+}
+.dtab:hover{color:var(--text);border-color:rgba(255,255,255,.2)}
+.dtab.on{background:rgba(212,146,42,.2);border-color:var(--maiz);color:var(--maiz-light)}
+
+body{padding-top:42px}
+
+/* ──────────────────────────────
+   TOPBAR
+────────────────────────────── */
+.topbar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 20px;
+  background:rgba(19,23,32,.92);
+  border-bottom:1px solid rgba(212,146,42,.12);
+  backdrop-filter:blur(14px);
+  position:sticky;top:42px;z-index:100;
+}
+.tb-brand{font-family:'Cinzel Decorative',serif;font-size:16px;color:var(--maiz-light);letter-spacing:3px}
+.tb-right{display:flex;align-items:center;gap:10px}
+.avatar{
+  width:36px;height:36px;border-radius:50%;
+  background:linear-gradient(135deg,var(--jade),var(--maiz));
+  display:flex;align-items:center;justify-content:center;
+  font-size:15px;border:2px solid rgba(212,146,42,.4);font-weight:700;
+}
+.back-btn{
+  width:36px;height:36px;border-radius:10px;
+  background:var(--noche-3);border:1px solid rgba(255,255,255,.1);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;font-size:17px;color:var(--text);transition:border-color .2s;
+}
+.back-btn:hover{border-color:var(--jade-glow)}
+
+/* ──────────────────────────────
+   SHARED COMPONENTS
+────────────────────────────── */
+.page{padding:22px 18px;max-width:520px;margin:0 auto}
+.pb{padding-bottom:82px}
+
+.sec-title{
+  font-family:'Cinzel',serif;font-size:11px;color:var(--muted);
+  letter-spacing:2px;text-transform:uppercase;margin-bottom:14px;
+  display:flex;align-items:center;gap:10px;
+}
+.sec-title::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.05)}
+
+.btn-primary{
+  width:100%;padding:13px;
+  background:linear-gradient(135deg,var(--jade),var(--jade-2));
+  border:none;border-radius:10px;color:#fff;
+  font-family:'Cinzel',serif;font-size:13px;font-weight:700;
+  letter-spacing:1.5px;cursor:pointer;transition:transform .15s,box-shadow .25s;
+  text-transform:uppercase;
+}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(43,153,98,.4)}
+.btn-primary:active{transform:translateY(0)}
+
+.btn-gold{background:linear-gradient(135deg,var(--terra-2),var(--maiz))}
+.btn-gold:hover{box-shadow:0 8px 24px rgba(192,74,16,.4)}
+
+.card{
+  background:var(--noche-3);
+  border:1px solid rgba(255,255,255,.07);
+  border-radius:var(--r);padding:18px;margin-bottom:12px;
+}
+
+/* progress bar */
+.prog-bg{height:7px;background:rgba(255,255,255,.07);border-radius:4px;overflow:hidden}
+.prog-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--jade),var(--jade-glow));transition:width .8s ease}
+.prog-labels{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-top:5px}
+
+/* ──────────────────────────────
+   BOTTOM NAV
+────────────────────────────── */
+.bot-nav{
+  position:fixed;bottom:0;left:0;right:0;
+  background:rgba(19,23,32,.97);
+  border-top:1px solid rgba(255,255,255,.07);
+  display:flex;justify-content:space-around;align-items:center;
+  padding:8px 0;backdrop-filter:blur(16px);z-index:100;
+}
+.nav-it{
+  display:flex;flex-direction:column;align-items:center;gap:3px;
+  cursor:pointer;padding:5px 14px;color:var(--muted);
+  transition:color .2s;font-size:10px;letter-spacing:.5px;
+}
+.nav-it span{font-size:21px}
+.nav-it.on{color:var(--jade-glow)}
+
+/* ──────────────────────────────
+   V1 — SPLASH / LOGIN
+────────────────────────────── */
+#v-login{
+  align-items:center;justify-content:center;
+  background:
+    radial-gradient(ellipse at 25% 15%,rgba(30,107,71,.25) 0%,transparent 55%),
+    radial-gradient(ellipse at 80% 85%,rgba(139,46,0,.2) 0%,transparent 55%),
+    var(--noche);
+}
+.login-card{
+  width:100%;max-width:400px;margin:20px;
+  background:rgba(27,34,53,.88);
+  border:1px solid rgba(212,146,42,.22);
+  border-radius:20px;padding:42px 34px 36px;
+  backdrop-filter:blur(20px);
+  box-shadow:0 0 60px rgba(0,0,0,.6),var(--glow-jade);
+  animation:fadeUp .6s ease;
+}
+.login-logo{text-align:center;margin-bottom:30px}
+.login-logo .gl{font-size:56px;filter:drop-shadow(0 0 18px rgba(68,216,149,.65))}
+.login-logo h1{font-family:'Cinzel Decorative',serif;font-size:24px;color:var(--maiz-light);letter-spacing:4px;margin-top:8px}
+.login-logo .sub{font-size:11px;color:var(--muted);letter-spacing:1.5px;margin-top:4px}
+.login-logo .inst{
+  font-size:10px;color:var(--jade-glow);letter-spacing:1px;
+  background:rgba(68,216,149,.1);border:1px solid rgba(68,216,149,.2);
+  border-radius:20px;padding:4px 12px;display:inline-block;margin-top:8px;
+}
+.fg{margin-bottom:16px}
+.fg label{display:block;font-size:10px;font-weight:700;color:var(--jade-glow);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:7px}
+.fg input{
+  width:100%;padding:12px 15px;
+  background:rgba(12,14,22,.7);border:1px solid rgba(212,146,42,.18);
+  border-radius:10px;color:var(--text);font-family:'Nunito',sans-serif;
+  font-size:14px;outline:none;transition:border-color .25s,box-shadow .25s;
+}
+.fg input:focus{border-color:var(--jade-glow);box-shadow:0 0 0 3px rgba(68,216,149,.1)}
+.flink{text-align:center;margin-top:14px;font-size:12px;color:var(--muted)}
+.flink a{color:var(--maiz);text-decoration:none;transition:color .2s}
+.flink a:hover{color:var(--maiz-light)}
+
+/* ──────────────────────────────
+   V2 — DASHBOARD
+────────────────────────────── */
+#v-dashboard{
+  background:
+    radial-gradient(ellipse at 70% 0%,rgba(30,107,71,.15) 0%,transparent 50%),
+    var(--noche);
+}
+.welcome{
+  background:linear-gradient(135deg,rgba(30,107,71,.3),rgba(212,146,42,.1));
+  border:1px solid rgba(68,216,149,.2);
+  border-radius:var(--r);padding:22px;margin-bottom:20px;
+  position:relative;overflow:hidden;animation:fadeUp .5s ease;
+}
+.welcome::after{
+  content:'𓂀';position:absolute;right:14px;top:6px;
+  font-size:64px;opacity:.06;pointer-events:none;
+}
+.welcome .tag{font-family:'Cinzel',serif;font-size:10px;color:var(--jade-glow);letter-spacing:2.5px;text-transform:uppercase;margin-bottom:6px}
+.welcome h2{font-family:'Cinzel',serif;font-size:19px;color:var(--maiz-light);margin-bottom:4px}
+.welcome p{font-size:13px;color:var(--muted);line-height:1.5}
+.welcome .school-tag{
+  margin-top:10px;font-size:10px;padding:3px 10px;
+  border-radius:20px;background:rgba(212,146,42,.1);
+  color:var(--maiz);border:1px solid rgba(212,146,42,.2);
+  display:inline-block;
+}
+
+.stats3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px}
+.sc{
+  background:var(--noche-3);border:1px solid rgba(255,255,255,.07);
+  border-radius:var(--r);padding:14px 10px;text-align:center;
+}
+.sc .si{font-size:22px;margin-bottom:5px}
+.sc .sv{font-family:'Cinzel',serif;font-size:19px;color:var(--maiz-light);font-weight:700}
+.sc .sl{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:2px}
+
+.action-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px}
+.ac{
+  background:var(--noche-3);border:1px solid rgba(255,255,255,.07);
+  border-radius:var(--r);padding:18px 14px;cursor:pointer;
+  transition:all .2s;text-align:center;
+}
+.ac:hover{border-color:var(--jade-glow);box-shadow:var(--glow-jade);transform:translateY(-2px)}
+.ac .ai{font-size:28px;margin-bottom:7px}
+.ac .al{font-family:'Cinzel',serif;font-size:11px;color:var(--jade-glow);letter-spacing:1px}
+.ac .as{font-size:11px;color:var(--muted);margin-top:3px}
+
+.mission-card{
+  background:var(--noche-3);border:1px solid rgba(212,146,42,.12);
+  border-radius:var(--r);padding:16px;margin-bottom:10px;cursor:pointer;transition:border-color .2s;
+}
+.mission-card:hover{border-color:var(--maiz)}
+.mc-head{display:flex;align-items:center;justify-content:space-between}
+.mc-name{font-family:'Cinzel',serif;font-size:13px;color:var(--text)}
+.mc-badge{
+  font-size:10px;padding:3px 9px;border-radius:20px;
+  background:rgba(68,216,149,.12);color:var(--jade-glow);
+  border:1px solid rgba(68,216,149,.25);
+}
+
+/* ──────────────────────────────
+   V3 — EXPLORACIÓN (Fase 1)
+────────────────────────────── */
+#v-explora{
+  background:
+    radial-gradient(ellipse at 30% 80%,rgba(91,42,140,.2) 0%,transparent 55%),
+    var(--noche);
+}
+.fase-header{
+  padding:22px 18px 14px;
+  background:linear-gradient(180deg,rgba(91,42,140,.15),transparent);
+  border-bottom:1px solid rgba(255,255,255,.05);
+}
+.fase-badge{
+  display:inline-block;padding:3px 12px;border-radius:20px;
+  font-size:10px;letter-spacing:2px;text-transform:uppercase;font-weight:700;
+  background:rgba(168,85,247,.15);color:var(--xib-glow);
+  border:1px solid rgba(168,85,247,.25);margin-bottom:10px;
+}
+.fase-header h2{font-family:'Cinzel',serif;font-size:18px;color:var(--text);margin-bottom:4px}
+.fase-header p{font-size:12px;color:var(--muted);line-height:1.5}
+
+.mito-local-card{
+  background:linear-gradient(135deg,rgba(91,42,140,.2),rgba(27,34,53,.8));
+  border:1px solid rgba(168,85,247,.2);
+  border-radius:var(--r);padding:18px;margin-bottom:12px;cursor:pointer;
+  transition:border-color .2s;
+}
+.mito-local-card:hover{border-color:var(--xib-glow)}
+.mlc-tag{font-size:10px;color:var(--xib-glow);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px}
+.mlc-name{font-family:'Cinzel',serif;font-size:15px;color:var(--text);margin-bottom:4px}
+.mlc-desc{font-size:12px;color:var(--muted);line-height:1.5}
+.mlc-link{font-size:11px;color:var(--xib-glow);margin-top:8px;display:flex;align-items:center;gap:5px}
+
+.bridge-card{
+  background:var(--noche-3);border:1px solid rgba(255,255,255,.07);
+  border-radius:var(--r);padding:18px;margin-bottom:12px;
+}
+.bridge-card h3{font-family:'Cinzel',serif;font-size:14px;color:var(--maiz-light);margin-bottom:12px}
+.comp-row{display:grid;grid-template-columns:1fr 20px 1fr;gap:8px;align-items:center;margin-bottom:10px}
+.comp-side{
+  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);
+  border-radius:10px;padding:10px;text-align:center;
+  font-size:11px;color:var(--text);
+}
+.comp-side .cs-icon{font-size:22px;margin-bottom:4px}
+.comp-side .cs-name{font-family:'Cinzel',serif;font-size:11px;color:var(--maiz)}
+.comp-side .cs-ctx{font-size:10px;color:var(--muted);margin-top:2px}
+.comp-mid{text-align:center;color:var(--muted);font-size:14px}
+
+/* ──────────────────────────────
+   V4 — RUTA DE NIVELES
+────────────────────────────── */
+#v-ruta{background:var(--noche)}
+.level-wrap{padding:18px;max-width:520px;margin:0 auto;padding-bottom:90px}
+.lvl-node{display:flex;gap:14px;margin-bottom:6px;cursor:pointer;animation:fadeUp .5s ease both}
+.lvl-conn{display:flex;flex-direction:column;align-items:center;width:50px;flex-shrink:0}
+.orb{
+  width:50px;height:50px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;border:2px solid;transition:transform .2s,box-shadow .2s;
+}
+.orb.done{background:linear-gradient(135deg,var(--jade),var(--jade-2));border-color:var(--jade-glow);box-shadow:0 0 18px rgba(68,216,149,.3)}
+.orb.now{background:linear-gradient(135deg,var(--terra-2),var(--maiz));border-color:var(--maiz-light);box-shadow:0 0 22px rgba(212,146,42,.5);animation:pulse 2s infinite}
+.orb.lock{background:var(--noche-3);border-color:rgba(255,255,255,.1);opacity:.45}
+.orb.xib{background:linear-gradient(135deg,var(--xib),#3b1a60);border-color:var(--xib-glow);box-shadow:var(--glow-xib);animation:pulse 2s infinite}
+.lvl-line{width:2px;flex:1;min-height:18px;background:linear-gradient(180deg,rgba(68,216,149,.25),rgba(255,255,255,.04));margin:4px 0}
+.lvl-info{
+  flex:1;background:var(--noche-3);border:1px solid rgba(255,255,255,.07);
+  border-radius:var(--r);padding:14px;transition:border-color .2s;
+}
+.lvl-node:hover .lvl-info{border-color:rgba(212,146,42,.3)}
+.li-num{font-size:9px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:3px}
+.li-title{font-family:'Cinzel',serif;font-size:14px;color:var(--text);margin-bottom:3px}
+.li-sub{font-size:11px;color:var(--muted);line-height:1.4}
+.li-tag{display:inline-block;margin-top:7px;font-size:9px;padding:2px 8px;border-radius:10px}
+.lt-done{background:rgba(68,216,149,.12);color:var(--jade-glow)}
+.lt-now{background:rgba(212,146,42,.12);color:var(--maiz-light)}
+.lt-lock{background:rgba(255,255,255,.05);color:var(--muted)}
+.lt-xib{background:rgba(168,85,247,.12);color:var(--xib-glow)}
+
+/* ──────────────────────────────
+   V5 — PERFIL / INSIGNIAS
+────────────────────────────── */
+#v-perfil{
+  background:
+    radial-gradient(ellipse at 80% 20%,rgba(212,146,42,.1) 0%,transparent 50%),
+    var(--noche);
+}
+.perfil-hero{
+  padding:32px 20px 22px;text-align:center;
+  background:linear-gradient(180deg,rgba(212,146,42,.07),transparent);
+  border-bottom:1px solid rgba(255,255,255,.05);
+}
+.p-ava{
+  width:82px;height:82px;border-radius:50%;margin:0 auto 12px;
+  background:linear-gradient(135deg,var(--jade),var(--maiz));
+  display:flex;align-items:center;justify-content:center;
+  font-size:34px;border:3px solid rgba(212,146,42,.4);
+  box-shadow:0 0 30px rgba(212,146,42,.22);
+}
+.p-name{font-family:'Cinzel',serif;font-size:19px;color:var(--maiz-light);margin-bottom:4px}
+.p-rank{font-size:11px;color:var(--jade-glow);letter-spacing:2px;text-transform:uppercase}
+.p-school{font-size:11px;color:var(--muted);margin-top:6px}
+
+/* insignias */
+.insignias-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:20px}
+.insig-card{
+  border-radius:var(--r);padding:16px;position:relative;
+  overflow:hidden;cursor:pointer;transition:transform .2s;
+}
+.insig-card:hover{transform:scale(1.02)}
+.insig-card.earned{border:1px solid}
+.insig-card.locked{border:1px solid rgba(255,255,255,.07);opacity:.5;filter:grayscale(.8)}
+.ic-maiz{background:linear-gradient(135deg,rgba(139,46,0,.35),rgba(212,146,42,.15));border-color:var(--maiz) !important}
+.ic-guerrero{background:linear-gradient(135deg,rgba(30,107,71,.35),rgba(68,216,149,.1));border-color:var(--jade-glow) !important}
+.ic-barro{background:linear-gradient(135deg,rgba(100,80,60,.3),rgba(160,130,90,.1));border-color:rgba(180,140,90,.4) !important}
+.ic-niebla{background:linear-gradient(135deg,rgba(91,42,140,.35),rgba(168,85,247,.1));border-color:var(--xib-glow) !important}
+.insig-icon{font-size:36px;margin-bottom:8px;display:block}
+.insig-name{font-family:'Cinzel',serif;font-size:13px;margin-bottom:4px}
+.insig-level{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px}
+.insig-desc{font-size:10px;color:var(--muted);line-height:1.5}
+.insig-badge{
+  position:absolute;top:10px;right:10px;
+  font-size:9px;padding:2px 7px;border-radius:10px;font-weight:700;
+}
+.ib-earn{background:rgba(68,216,149,.2);color:var(--jade-glow);border:1px solid rgba(68,216,149,.3)}
+.ib-lock{background:rgba(255,255,255,.07);color:var(--muted)}
+
+.res3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+.rc{
+  background:var(--noche-3);border:1px solid rgba(255,255,255,.07);
+  border-radius:var(--r);padding:14px 10px;text-align:center;cursor:pointer;
+  transition:border-color .2s;
+}
+.rc:hover{border-color:var(--maiz)}
+.rc .ri{font-size:24px;margin-bottom:5px}
+.rc .rv{font-family:'Cinzel',serif;font-size:17px;color:var(--maiz-light);font-weight:700}
+.rc .rl{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:2px}
+
+/* ──────────────────────────────
+   V6 — VIDEO
+────────────────────────────── */
+#v-video{background:var(--noche);flex-direction:column}
+.vid-wrap{
+  position:relative;background:#000;
+  aspect-ratio:16/9;max-height:230px;
+  display:flex;align-items:center;justify-content:center;overflow:hidden;
+}
+.vid-bg{
+  width:100%;height:100%;display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,#0a1520,#080e08);
+}
+.play-btn{
+  position:absolute;width:68px;height:68px;border-radius:50%;
+  background:rgba(68,216,149,.85);backdrop-filter:blur(8px);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:transform .2s,background .2s;
+  font-size:26px;padding-left:6px;color:#fff;
+  box-shadow:0 0 28px rgba(68,216,149,.5);
+}
+.play-btn:hover{transform:scale(1.1);background:var(--jade-glow)}
+.vid-prog-bar{height:4px;background:rgba(255,255,255,.08)}
+.vid-prog-fill{height:100%;width:0;background:linear-gradient(90deg,var(--jade),var(--jade-glow));transition:width .3s}
+.vid-info{padding:18px}
+.vid-label{font-size:10px;color:var(--jade-glow);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px}
+.vid-title{font-family:'Cinzel',serif;font-size:16px;color:var(--text);margin-bottom:6px}
+.vid-desc{font-size:12px;color:var(--muted);line-height:1.6}
+.vid-warn{
+  margin:0 18px 18px;padding:14px;
+  background:rgba(232,85,48,.08);border:1px solid rgba(232,85,48,.2);
+  border-radius:var(--r);font-size:12px;color:var(--muted);
+  display:flex;gap:10px;align-items:flex-start;
+}
+.vid-cta{
+  margin:0 18px 18px;padding:16px;
+  background:rgba(30,107,71,.2);border:1px solid rgba(68,216,149,.25);
+  border-radius:var(--r);display:none;
+  align-items:center;justify-content:space-between;gap:12px;
+}
+.vid-cta p{font-size:12px;color:var(--muted)}
+.vid-cta span{font-family:'Cinzel',serif;font-size:11px;color:var(--jade-glow)}
+
+/* ──────────────────────────────
+   V7 — CUESTIONARIO
+────────────────────────────── */
+#v-quiz{background:var(--noche)}
+.quiz-pills{display:flex;gap:6px;padding:14px 18px 0}
+.pill{height:5px;flex:1;border-radius:3px;background:rgba(255,255,255,.08);transition:background .3s}
+.pill.done{background:var(--jade)}
+.pill.now{background:var(--maiz)}
+
+.quiz-card{
+  margin:14px 18px;padding:22px;
+  background:var(--noche-3);border:1px solid rgba(255,255,255,.08);
+  border-radius:18px;animation:fadeUp .4s ease;
+}
+.q-tag{font-size:10px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:9px}
+.q-txt{font-family:'Cinzel',serif;font-size:16px;color:var(--text);line-height:1.5;margin-bottom:20px}
+.opts{display:flex;flex-direction:column;gap:9px}
+.opt{
+  padding:13px 16px;background:rgba(255,255,255,.03);
+  border:1.5px solid rgba(255,255,255,.08);border-radius:12px;
+  cursor:pointer;font-size:13px;color:var(--muted);
+  transition:all .2s;display:flex;align-items:center;gap:11px;
+}
+.opt:hover{border-color:var(--jade-glow);color:var(--text)}
+.opt.ok{border-color:var(--jade-glow);background:rgba(68,216,149,.1);color:var(--jade-glow)}
+.opt.no{border-color:var(--fire);background:rgba(232,85,48,.08);color:var(--fire)}
+.opt-let{
+  width:26px;height:26px;border-radius:50%;
+  background:rgba(255,255,255,.07);display:flex;align-items:center;
+  justify-content:center;font-family:'Cinzel',serif;font-size:11px;flex-shrink:0;
+}
+.qfb{
+  margin:0 18px;padding:14px;border-radius:var(--r);
+  display:none;gap:11px;align-items:flex-start;animation:fadeUp .3s ease;
+}
+.qfb.ok{display:flex;background:rgba(68,216,149,.1);border:1px solid rgba(68,216,149,.25)}
+.qfb.no{display:flex;background:rgba(232,85,48,.08);border:1px solid rgba(232,85,48,.25)}
+.fb-ico{font-size:20px;flex-shrink:0}
+.fb-tit{font-family:'Cinzel',serif;font-size:12px;margin-bottom:3px}
+.fb-bod{font-size:11px;color:var(--muted)}
+.ok .fb-tit{color:var(--jade-glow)}
+.no .fb-tit{color:var(--fire)}
+.q-acts{padding:14px 18px;display:flex;gap:10px}
+.btn-sec{
+  flex:1;padding:13px;background:transparent;
+  border:1px solid rgba(255,255,255,.1);border-radius:10px;
+  color:var(--muted);font-family:'Cinzel',serif;font-size:12px;
+  letter-spacing:1px;cursor:pointer;transition:all .2s;
+}
+.btn-sec:hover{border-color:var(--maiz);color:var(--maiz)}
+
+/* ──────────────────────────────
+   V8 — MURO COLABORATIVO (Fase 3)
+────────────────────────────── */
+#v-muro{
+  background:
+    radial-gradient(ellipse at 50% 0%,rgba(30,107,71,.18) 0%,transparent 55%),
+    var(--noche);
+}
+.muro-head{
+  padding:22px 18px 16px;
+  background:linear-gradient(180deg,rgba(30,107,71,.1),transparent);
+  border-bottom:1px solid rgba(255,255,255,.05);
+}
+.muro-badge{
+  display:inline-block;padding:3px 12px;border-radius:20px;
+  font-size:10px;letter-spacing:2px;text-transform:uppercase;font-weight:700;
+  background:rgba(68,216,149,.12);color:var(--jade-glow);
+  border:1px solid rgba(68,216,149,.22);margin-bottom:10px;
+}
+.muro-head h2{font-family:'Cinzel',serif;font-size:17px;color:var(--text);margin-bottom:4px}
+.muro-head p{font-size:12px;color:var(--muted);line-height:1.5}
+
+.post-input-card{
+  margin:18px;padding:20px;
+  background:var(--noche-3);border:1px solid rgba(68,216,149,.15);
+  border-radius:var(--r);
+}
+.pic-label{font-family:'Cinzel',serif;font-size:13px;color:var(--maiz-light);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.pic-type-row{display:flex;gap:8px;margin-bottom:14px}
+.type-btn{
+  flex:1;padding:10px;border-radius:10px;border:1.5px solid rgba(255,255,255,.1);
+  background:rgba(255,255,255,.03);cursor:pointer;text-align:center;
+  font-size:12px;color:var(--muted);transition:all .2s;
+}
+.type-btn.sel{border-color:var(--jade-glow);background:rgba(68,216,149,.1);color:var(--jade-glow)}
+.type-btn span{display:block;font-size:20px;margin-bottom:4px}
+.post-ta{
+  width:100%;padding:12px;background:rgba(12,14,22,.6);
+  border:1px solid rgba(255,255,255,.08);border-radius:10px;
+  color:var(--text);font-family:'Nunito',sans-serif;font-size:13px;
+  resize:none;outline:none;min-height:90px;transition:border-color .2s;line-height:1.5;
+}
+.post-ta:focus{border-color:var(--jade-glow)}
+.post-ta::placeholder{color:var(--muted)}
+.val-tag-row{display:flex;flex-wrap:wrap;gap:7px;margin:12px 0}
+.val-chip{
+  padding:6px 12px;border-radius:20px;font-size:11px;
+  background:var(--noche);border:1px solid rgba(255,255,255,.1);
+  cursor:pointer;color:var(--muted);transition:all .2s;
+}
+.val-chip.sel{background:rgba(30,107,71,.25);border-color:var(--jade-glow);color:var(--jade-glow)}
+
+.padlet-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 18px 18px}
+.ppost{
+  border-radius:var(--r);padding:14px;
+  position:relative;overflow:hidden;
+  animation:fadeUp .4s ease;
+}
+.ppost-1{background:linear-gradient(135deg,rgba(30,107,71,.3),rgba(27,34,53,.8));border:1px solid rgba(68,216,149,.18)}
+.ppost-2{background:linear-gradient(135deg,rgba(139,46,0,.25),rgba(27,34,53,.8));border:1px solid rgba(212,146,42,.18)}
+.ppost-3{background:linear-gradient(135deg,rgba(91,42,140,.25),rgba(27,34,53,.8));border:1px solid rgba(168,85,247,.18)}
+.ppost-4{background:linear-gradient(135deg,rgba(30,50,100,.3),rgba(27,34,53,.8));border:1px solid rgba(100,150,255,.18)}
+.pp-author{font-family:'Cinzel',serif;font-size:10px;color:var(--maiz);margin-bottom:5px;display:flex;align-items:center;gap:5px}
+.pp-text{font-size:11px;color:var(--text);line-height:1.5;margin-bottom:6px}
+.pp-val{font-size:9px;padding:2px 7px;border-radius:10px;background:rgba(255,255,255,.07);color:var(--muted);display:inline-block}
+.pp-like{position:absolute;bottom:10px;right:10px;font-size:11px;color:var(--muted);cursor:pointer}
+
+/* ──────────────────────────────
+   V9 — ENCUESTA
+────────────────────────────── */
+#v-encuesta{
+  align-items:center;justify-content:center;
+  background:
+    radial-gradient(ellipse at 50% 50%,rgba(212,146,42,.08) 0%,transparent 60%),
+    var(--noche);
+}
+.enc-card{
+  width:100%;max-width:440px;margin:20px;
+  background:rgba(27,34,53,.9);
+  border:1px solid rgba(212,146,42,.18);
+  border-radius:20px;padding:32px 26px;
+  backdrop-filter:blur(20px);
+  box-shadow:var(--glow-maiz);
+  animation:fadeUp .5s ease;
+}
+.enc-top-badge{
+  display:inline-block;padding:3px 12px;border-radius:20px;
+  font-size:10px;letter-spacing:2px;font-weight:700;text-transform:uppercase;
+  background:rgba(68,216,149,.12);color:var(--jade-glow);
+  border:1px solid rgba(68,216,149,.25);margin-bottom:14px;
+}
+.enc-card h2{font-family:'Cinzel Decorative',serif;font-size:18px;color:var(--maiz-light);margin-bottom:6px;line-height:1.3}
+.enc-card>p{font-size:12px;color:var(--muted);margin-bottom:22px;line-height:1.5}
+.rq{margin-bottom:20px}
+.rq .rl{font-size:13px;color:var(--text);margin-bottom:10px;font-weight:600}
+.stars{display:flex;gap:7px}
+.star{font-size:27px;cursor:pointer;transition:transform .15s;filter:grayscale(1) opacity(.4)}
+.star.lit{filter:none;transform:scale(1.1)}
+.enc-opts{display:flex;flex-wrap:wrap;gap:7px;margin-top:8px}
+.ec{
+  padding:6px 13px;border-radius:20px;font-size:11px;
+  background:var(--noche-3);border:1px solid rgba(255,255,255,.1);
+  cursor:pointer;color:var(--muted);transition:all .2s;
+}
+.ec.sel{background:rgba(30,107,71,.22);border-color:var(--jade-glow);color:var(--jade-glow)}
+.enc-ta{
+  width:100%;padding:11px 13px;margin-top:8px;
+  background:var(--noche-3);border:1px solid rgba(255,255,255,.1);
+  border-radius:10px;color:var(--text);font-family:'Nunito',sans-serif;
+  font-size:12px;resize:none;outline:none;min-height:70px;
+  transition:border-color .2s;
+}
+.enc-ta:focus{border-color:var(--jade-glow)}
+
+/* ──────────────────────────────
+   V10 — FORGOT
+────────────────────────────── */
+#v-forgot{align-items:center;justify-content:center;background:var(--noche)}
+.fg-card{
+  width:100%;max-width:380px;margin:20px;
+  background:rgba(27,34,53,.9);border:1px solid rgba(212,146,42,.18);
+  border-radius:20px;padding:38px 30px;backdrop-filter:blur(20px);
+  box-shadow:var(--glow-jade);animation:fadeUp .5s ease;text-align:center;
+}
+.fg-ico{font-size:50px;margin-bottom:14px}
+.fg-card h2{font-family:'Cinzel',serif;font-size:19px;color:var(--maiz-light);margin-bottom:7px}
+.fg-card>p{font-size:12px;color:var(--muted);margin-bottom:24px;line-height:1.5}
+.succ{display:none;text-align:center;padding:8px 0}
+.succ-ico{font-size:54px;margin-bottom:10px}
+.succ-msg{font-family:'Cinzel',serif;font-size:15px;color:var(--jade-glow);margin-bottom:6px}
+.succ-sub{font-size:12px;color:var(--muted);line-height:1.5}
+
+/* ──────────────────────────────
+   ANIMATIONS
+────────────────────────────── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{box-shadow:0 0 22px rgba(212,146,42,.45)}50%{box-shadow:0 0 38px rgba(212,146,42,.8)}}
+</style>
+</head>
+<body>
+
+<!-- DEMO NAV -->
+<nav id="demoNav">
+  <div class="dtab on"  onclick="go('v-login')">1·Login</div>
+  <div class="dtab" onclick="go('v-dashboard')">2·Panel</div>
+  <div class="dtab" onclick="go('v-explora')">3·Exploración</div>
+  <div class="dtab" onclick="go('v-ruta')">4·Ruta</div>
+  <div class="dtab" onclick="go('v-perfil')">5·Insignias</div>
+  <div class="dtab" onclick="go('v-video')">6·Video</div>
+  <div class="dtab" onclick="go('v-quiz')">7·Cuestionario</div>
+  <div class="dtab" onclick="go('v-muro')">8·Muro Collab</div>
+  <div class="dtab" onclick="go('v-encuesta')">9·Encuesta</div>
+  <div class="dtab" onclick="go('v-forgot')">10·Contraseña</div>
+</nav>
+
+<!-- ══ V1 LOGIN ══ -->
+<div class="view active" id="v-login">
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="gl">𓂀</div>
+      <h1>MAYALAB</h1>
+      <div class="sub">Guardián del Conocimiento</div>
+      <div class="inst">I.E. Antonio Nariño · El Morro, Yopal</div>
+    </div>
+    <div class="fg">
+      <label>Correo Electrónico</label>
+      <input type="email" placeholder="estudiante@antonionarino.edu.co">
+    </div>
+    <div class="fg">
+      <label>Contraseña</label>
+      <input type="password" placeholder="••••••••">
+    </div>
+    <button class="btn-primary" onclick="go('v-dashboard')" style="margin-top:6px">Ingresar al Linaje ▶</button>
+    <div class="flink">¿Olvidaste tu contraseña? <a href="#" onclick="go('v-forgot');return false">Recuperar acceso</a></div>
+  </div>
+</div>
+
+<!-- ══ V2 DASHBOARD ══ -->
+<div class="view" id="v-dashboard">
+  <div class="topbar">
+    <div class="tb-brand">𓂀 MAYALAB</div>
+    <div class="tb-right">
+      <div style="font-size:12px;color:var(--muted)">Hola,</div>
+      <div class="avatar">G</div>
+    </div>
+  </div>
+  <div class="page pb">
+    <div class="welcome">
+      <div class="tag">🌿 Bienvenido, Guardián</div>
+      <h2>Progreso de tu Linaje</h2>
+      <p>Tu cuenta está <strong style="color:var(--jade-glow)">ACTIVA</strong>. Aquí tu hoja de ruta de hoy.</p>
+      <div class="school-tag">📍 I.E. Antonio Nariño · Grado 6° · El Morro, Yopal-Casanare</div>
+    </div>
+    <div class="stats3">
+      <div class="sc"><div class="si">📜</div><div class="sv">18</div><div class="sl">Versos</div></div>
+      <div class="sc"><div class="si">⚔️</div><div class="sv">3</div><div class="sl">Misiones</div></div>
+      <div class="sc"><div class="si">🔥</div><div class="sv">7</div><div class="sl">Racha</div></div>
+    </div>
+    <div class="sec-title">Elige tu camino</div>
+    <div class="action-grid">
+      <div class="ac" onclick="go('v-explora')">
+        <div class="ai">🌾</div>
+        <div class="al">Explorar</div>
+        <div class="as">Mitos de El Morro</div>
+      </div>
+      <div class="ac" onclick="go('v-ruta')">
+        <div class="ai">🗺️</div>
+        <div class="al">Ruta Maya</div>
+        <div class="as">5 niveles del Popol Vuh</div>
+      </div>
+      <div class="ac" onclick="go('v-quiz')">
+        <div class="ai">⚡</div>
+        <div class="al">Iniciar Retos</div>
+        <div class="as">3 misiones pendientes</div>
+      </div>
+      <div class="ac" onclick="go('v-muro')">
+        <div class="ai">📌</div>
+        <div class="al">Muro Collab</div>
+        <div class="as">Compartir relatos</div>
+      </div>
+    </div>
+    <div class="sec-title">Misiones en curso</div>
+    <div class="mission-card" onclick="go('v-video')">
+      <div class="mc-head"><div class="mc-name">🌊 El Despertar del Agua</div><div class="mc-badge">80%</div></div>
+      <div class="prog-bg" style="margin-top:10px"><div class="prog-fill" style="width:80%"></div></div>
+      <div class="prog-labels"><span>Nivel 1</span><span>8/10 actividades</span></div>
+    </div>
+    <div class="mission-card">
+      <div class="mc-head"><div class="mc-name">🦎 Cazadores de Gigantes</div><div class="mc-badge">45%</div></div>
+      <div class="prog-bg" style="margin-top:10px"><div class="prog-fill" style="width:45%"></div></div>
+      <div class="prog-labels"><span>Nivel 2</span><span>5/11 actividades</span></div>
+    </div>
+  </div>
+  <nav class="bot-nav">
+    <div class="nav-it on" onclick="go('v-dashboard')"><span>🏠</span>Inicio</div>
+    <div class="nav-it" onclick="go('v-ruta')"><span>🗺️</span>Ruta</div>
+    <div class="nav-it" onclick="go('v-quiz')"><span>⚡</span>Retos</div>
+    <div class="nav-it" onclick="go('v-perfil')"><span>🛡️</span>Insignias</div>
+    <div class="nav-it" onclick="go('v-muro')"><span>📌</span>Muro</div>
+  </nav>
+</div>
+
+<!-- ══ V3 EXPLORACIÓN ══ -->
+<div class="view" id="v-explora">
+  <div class="topbar">
+    <div class="back-btn" onclick="go('v-dashboard')">←</div>
+    <div style="font-family:'Cinzel',serif;font-size:14px;color:var(--maiz-light)">Fase 1 — Exploración</div>
+    <div style="width:36px"></div>
+  </div>
+  <div class="fase-header">
+    <div class="fase-badge">🌿 Eco de los Ancestros</div>
+    <h2>El Eco de los Ancestros en El Morro</h2>
+    <p>Conecta los mitos de Casanare con la cosmovisión Maya. Identifica similitudes entre los héroes de tu región y los del Popol Vuh.</p>
+  </div>
+  <div class="page pb" style="padding-top:18px">
+    <div class="sec-title">Mitos y leyendas de Casanare</div>
+    <div class="mito-local-card">
+      <div class="mlc-tag">🦟 Llanura · Casanare</div>
+      <div class="mlc-name">El Silbón</div>
+      <div class="mlc-desc">Espíritu errante que recorre los llanos cargando los huesos de sus víctimas. Simboliza el castigo por el irrespeto a los mayores y la naturaleza.</div>
+      <div class="mlc-link">🔗 <span>Compara con personajes del Popol Vuh →</span></div>
+    </div>
+    <div class="mito-local-card">
+      <div class="mlc-tag">🌿 Piedemonte · El Morro</div>
+      <div class="mlc-name">La Madre Monte</div>
+      <div class="mlc-desc">Guardiana de los bosques y ríos del piedemonte llanero. Protege la naturaleza de quienes la dañan irresponsablemente.</div>
+      <div class="mlc-link">🔗 <span>Relacionar con la cosmovisión maya →</span></div>
+    </div>
+
+    <div class="sec-title" style="margin-top:8px">Puente cultural — Héroes comparados</div>
+    <div class="bridge-card">
+      <h3>🌉 ¿Quiénes son similares?</h3>
+      <div class="comp-row">
+        <div class="comp-side"><div class="cs-icon">🦅</div><div class="cs-name">Hunahpú</div><div class="cs-ctx">Héroe gemelo del Popol Vuh · Maya</div></div>
+        <div class="comp-mid">≈</div>
+        <div class="comp-side"><div class="cs-icon">🌾</div><div class="cs-name">Llanero Héroe</div><div class="cs-ctx">Defensor de la llanura · Casanare</div></div>
+      </div>
+      <div class="comp-row">
+        <div class="comp-side"><div class="cs-icon">🐆</div><div class="cs-name">Ixbalanqué</div><div class="cs-ctx">Gemelo jaguar del Popol Vuh</div></div>
+        <div class="comp-mid">≈</div>
+        <div class="comp-side"><div class="cs-icon">🦁</div><div class="cs-name">El Tigre</div><div class="cs-ctx">Símbolo del piedemonte llanero</div></div>
+      </div>
+      <div class="comp-row">
+        <div class="comp-side"><div class="cs-icon">🌽</div><div class="cs-name">Maíz Sagrado</div><div class="cs-ctx">Origen del hombre maya</div></div>
+        <div class="comp-mid">≈</div>
+        <div class="comp-side"><div class="cs-icon">🌱</div><div class="cs-name">Conuco</div><div class="cs-ctx">Siembra y sustento de El Morro</div></div>
+      </div>
+    </div>
+    <button class="btn-primary btn-gold" onclick="go('v-ruta')" style="margin-top:4px">Avanzar a la Ruta de Niveles →</button>
+  </div>
+</div>
+
+<!-- ══ V4 RUTA ══ -->
+<div class="view" id="v-ruta">
+  <div class="topbar">
+    <div class="back-btn" onclick="go('v-dashboard')">←</div>
+    <div style="font-family:'Cinzel',serif;font-size:14px;color:var(--maiz-light)">Ruta — Popol Vuh</div>
+    <div style="width:36px"></div>
+  </div>
+  <div class="fase-header" style="padding:18px 18px 12px;background:none;border-color:rgba(255,255,255,.05)">
+    <h2 style="font-family:'Cinzel',serif;font-size:17px;color:var(--text)">El Despertar de la Humanidad</h2>
+    <p style="font-size:12px;color:var(--muted)">Avanza por los 5 niveles de la cosmovisión maya del Popol Vuh</p>
+  </div>
+  <div class="level-wrap">
+    <div class="lvl-node" onclick="go('v-video')" style="animation-delay:.05s">
+      <div class="lvl-conn"><div class="orb done">🌊</div><div class="lvl-line"></div></div>
+      <div class="lvl-info"><div class="li-num">Nivel 1</div><div class="li-title">Mundo Cero — El Despertar del Agua</div><div class="li-sub">Las aguas primordiales y el inicio de la creación según los dioses mayas</div><span class="li-tag lt-done">✓ Completado</span></div>
+    </div>
+    <div class="lvl-node" onclick="go('v-video')" style="animation-delay:.1s">
+      <div class="lvl-conn"><div class="orb now">🦎</div><div class="lvl-line"></div></div>
+      <div class="lvl-info"><div class="li-num">Nivel 2</div><div class="li-title">Cazadores de Gigantes</div><div class="li-sub">Hunahpú e Ixbalanqué derrotan a Vucub Caquix, el pájaro vanidoso</div><span class="li-tag lt-now">● En curso — 45%</span></div>
+    </div>
+    <div class="lvl-node" style="animation-delay:.15s">
+      <div class="lvl-conn"><div class="orb xib">🌑</div><div class="lvl-line"></div></div>
+      <div class="lvl-info"><div class="li-num">Nivel 3</div><div class="li-title">Escape de Xibalbá: El Inframundo</div><div class="li-sub">Los Héroes Gemelos descienden al reino de la oscuridad y el misterio</div><span class="li-tag lt-xib">🔮 Desbloqueando…</span></div>
+    </div>
+    <div class="lvl-node" style="animation-delay:.2s">
+      <div class="lvl-conn"><div class="orb lock">⚡</div><div class="lvl-line"></div></div>
+      <div class="lvl-info"><div class="li-num">Nivel 4</div><div class="li-title">El Torneo de los Dioses</div><div class="li-sub">El juego de pelota sagrado — demuestra lo aprendido frente a las deidades</div><span class="li-tag lt-lock">🔒 Bloqueado</span></div>
+    </div>
+    <div class="lvl-node" style="animation-delay:.25s">
+      <div class="lvl-conn"><div class="orb lock">🌽</div></div>
+      <div class="lvl-info"><div class="li-num">Nivel 5 — Final</div><div class="li-title">El Secreto del Maíz</div><div class="li-sub">El origen del hombre maya y su relación con el maíz sagrado de Latinoamérica</div><span class="li-tag lt-lock">🔒 Bloqueado</span></div>
+    </div>
+  </div>
+  <nav class="bot-nav">
+    <div class="nav-it" onclick="go('v-dashboard')"><span>🏠</span>Inicio</div>
+    <div class="nav-it on"><span>🗺️</span>Ruta</div>
+    <div class="nav-it" onclick="go('v-quiz')"><span>⚡</span>Retos</div>
+    <div class="nav-it" onclick="go('v-perfil')"><span>🛡️</span>Insignias</div>
+    <div class="nav-it" onclick="go('v-muro')"><span>📌</span>Muro</div>
+  </nav>
+</div>
+
+<!-- ══ V5 PERFIL / INSIGNIAS ══ -->
+<div class="view" id="v-perfil">
+  <div class="topbar">
+    <div class="back-btn" onclick="go('v-dashboard')">←</div>
+    <div style="font-family:'Cinzel',serif;font-size:14px;color:var(--maiz-light)">Perfil e Insignias</div>
+    <div style="font-size:20px;cursor:pointer">⚙️</div>
+  </div>
+  <div class="perfil-hero">
+    <div class="p-ava">🦁</div>
+    <div class="p-name">Guerrero Jaguar</div>
+    <div class="p-rank">⭐ Nivel 5 · Guardián Mayor</div>
+    <div class="p-school">I.E. Antonio Nariño · Grado 6° · El Morro, Yopal</div>
+  </div>
+  <div class="page pb" style="padding-top:18px">
+    <div class="res3">
+      <div class="rc"><div class="ri">🍫</div><div class="rv">340</div><div class="rl">Cacao</div></div>
+      <div class="rc"><div class="ri">🏅</div><div class="rv">12</div><div class="rl">Logros</div></div>
+      <div class="rc"><div class="ri">🔥</div><div class="rv">7</div><div class="rl">Racha</div></div>
+    </div>
+
+    <div class="sec-title">Sistema de Insignias — Popol Vuh</div>
+
+    <div class="insignias-grid">
+      <!-- SUPERIOR: Corazón del Cielo -->
+      <div class="insig-card earned ic-maiz" onclick="alert('¡Insignia SUPERIOR!\n\nCorazón del Cielo: Has sembrado el conocimiento ancestral en tu realidad en El Morro. El maíz es sustento físico y espiritual de Latinoamérica.')">
+        <div class="insig-badge ib-earn">SUPERIOR</div>
+        <span class="insig-icon">☀️</span>
+        <div class="insig-name" style="color:var(--maiz-light)">Corazón del Cielo</div>
+        <div class="insig-level" style="color:var(--maiz)">Nivel Superior</div>
+        <div class="insig-desc">Has relacionado el maíz sagrado maya con el conuco yopaleño. Conocimiento ancestral sembrado en tu realidad.</div>
+      </div>
+      <!-- ALTO: Guerrero de Madera -->
+      <div class="insig-card earned ic-guerrero" onclick="alert('¡Insignia ALTA!\n\nGuerrero de Madera: Ves tu entorno reflejado en el mito. El jaguar maya habita también en el piedemonte llanero.')">
+        <div class="insig-badge ib-earn" style="background:rgba(68,216,149,.2);color:var(--jade-glow);border-color:rgba(68,216,149,.3)">ALTO</div>
+        <span class="insig-icon">🐆</span>
+        <div class="insig-name" style="color:var(--jade-glow)">Guerrero de Madera</div>
+        <div class="insig-level" style="color:var(--jade-glow)">Nivel Alto</div>
+        <div class="insig-desc">Resistencia y conexión con la naturaleza. El jaguar conecta la simbología maya con el piedemonte llanero.</div>
+      </div>
+      <!-- BÁSICO: Primer Intento de Barro -->
+      <div class="insig-card earned ic-barro" onclick="alert('Insignia BÁSICA\n\nPrimer Intento de Barro: Identificas elementos del Popol Vuh, pero como el hombre de barro, tu comprensión es literal. ¡Sigue leyendo!')">
+        <div class="insig-badge ib-earn" style="background:rgba(180,140,90,.15);color:#b48c5a;border-color:rgba(180,140,90,.3)">BÁSICO</div>
+        <span class="insig-icon">🪨</span>
+        <div class="insig-name" style="color:#c8a87e">Primer Intento de Barro</div>
+        <div class="insig-level" style="color:#b48c5a">Nivel Básico</div>
+        <div class="insig-desc">Identificas personajes, pero la comprensión es literal. Como el hombre de barro: requiere moldeado y apoyo docente.</div>
+      </div>
+      <!-- BAJO: Niebla de Xibalbá -->
+      <div class="insig-card locked ic-niebla">
+        <div class="insig-badge ib-lock">BAJO</div>
+        <span class="insig-icon">💀</span>
+        <div class="insig-name" style="color:var(--xib-glow)">Niebla de Xibalbá</div>
+        <div class="insig-level" style="color:var(--xib-glow)">Nivel Bajo</div>
+        <div class="insig-desc">El conocimiento aún está oculto en la oscuridad. La comprensión necesita ser explorada con mayor profundidad.</div>
+      </div>
+    </div>
+
+    <div class="card" style="background:linear-gradient(135deg,rgba(30,107,71,.15),rgba(27,34,53,.8));border-color:rgba(68,216,149,.12)">
+      <div style="font-family:'Cinzel',serif;font-size:13px;color:var(--maiz-light);margin-bottom:10px">📊 Rúbrica de Gamificación</div>
+      <div style="font-size:11px;color:var(--muted);line-height:1.7">
+        Las insignias son tu autoevaluación en tiempo real:<br>
+        <strong style="color:var(--text)">🪨 Barro</strong> → Profundiza en la lectura<br>
+        <strong style="color:var(--text)">🐆 Madera</strong> → Conectas mito y entorno<br>
+        <strong style="color:var(--text)">🌽 Maíz</strong> → Interpretas y relacionas con Yopal
+      </div>
+    </div>
+  </div>
+  <nav class="bot-nav">
+    <div class="nav-it" onclick="go('v-dashboard')"><span>🏠</span>Inicio</div>
+    <div class="nav-it" onclick="go('v-ruta')"><span>🗺️</span>Ruta</div>
+    <div class="nav-it" onclick="go('v-quiz')"><span>⚡</span>Retos</div>
+    <div class="nav-it on"><span>🛡️</span>Insignias</div>
+    <div class="nav-it" onclick="go('v-muro')"><span>📌</span>Muro</div>
+  </nav>
+</div>
+
+<!-- ══ V6 VIDEO ══ -->
+<div class="view" id="v-video">
+  <div class="topbar">
+    <div class="back-btn" onclick="go('v-ruta')">←</div>
+    <div style="font-family:'Cinzel',serif;font-size:13px;color:var(--maiz-light)">Fase 2 — Aprendizaje</div>
+    <div style="font-size:11px;color:var(--jade-glow)">Obligatorio</div>
+  </div>
+  <div class="vid-wrap" id="vidWrap">
+    <div class="vid-bg"><div style="font-size:72px;opacity:.15">🌊</div></div>
+    <div class="play-btn" id="playBtn" onclick="startVid()">▶</div>
+  </div>
+  <div class="vid-prog-bar"><div class="vid-prog-fill" id="vp"></div></div>
+  <div class="vid-info">
+    <div class="vid-label">Nivel 2 · Navegando el Inframundo Maya</div>
+    <div class="vid-title">Cazadores de Gigantes — Xibalbá Digital</div>
+    <div class="vid-desc">Conoce cómo Hunahpú e Ixbalanqué derrotaron a Vucub Caquix usando el ingenio. Comprende la cosmovisión maya y la importancia del juego de pelota sagrado para los pueblos mesoamericanos.</div>
+  </div>
+  <div class="vid-warn">
+    <span style="font-size:18px;flex-shrink:0">⚠️</span>
+    <span>Debes completar el video antes del cuestionario. Si fallas una pregunta, regresarás aquí automáticamente para repasar el contenido.</span>
+  </div>
+  <div class="vid-cta" id="vidCta">
+    <div><p>¡Video completado! Listo para el cuestionario.</p><span>Conocimiento registrado ✓</span></div>
+    <button class="btn-primary" style="width:auto;padding:11px 18px;white-space:nowrap" onclick="go('v-quiz')">Ir al Quiz →</button>
+  </div>
+</div>
+
+<!-- ══ V7 CUESTIONARIO ══ -->
+<div class="view" id="v-quiz">
+  <div class="topbar">
+    <div class="back-btn" onclick="go('v-dashboard')">←</div>
+    <div style="font-family:'Cinzel',serif;font-size:13px;color:var(--maiz-light)">Cuestionario de Validación</div>
+    <div style="font-size:12px;color:var(--muted)" id="qCtr">1/3</div>
+  </div>
+  <div class="quiz-pills">
+    <div class="pill now" id="p1"></div>
+    <div class="pill" id="p2"></div>
+    <div class="pill" id="p3"></div>
+  </div>
+  <div class="quiz-card" id="qCard">
+    <div class="q-tag" id="qTag">Pregunta 1 de 3</div>
+    <div class="q-txt" id="qTxt"></div>
+    <div class="opts" id="qOpts"></div>
+  </div>
+  <div class="qfb" id="qFb">
+    <div class="fb-ico" id="fbIco"></div>
+    <div><div class="fb-tit" id="fbTit"></div><div class="fb-bod" id="fbBod"></div></div>
+  </div>
+  <div class="q-acts">
+    <button class="btn-sec" id="retBtn" style="display:none" onclick="go('v-video')">📹 Ver Video Nuevamente</button>
+    <button class="btn-primary" id="nxtBtn" style="display:none;flex:2" onclick="nxtQ()">Siguiente →</button>
+  </div>
+</div>
+
+<!-- ══ V8 MURO COLABORATIVO ══ -->
+<div class="view" id="v-muro">
+  <div class="topbar">
+    <div class="back-btn" onclick="go('v-dashboard')">←</div>
+    <div style="font-family:'Cinzel',serif;font-size:13px;color:var(--maiz-light)">Fase 3 — Cierre</div>
+    <div style="width:36px"></div>
+  </div>
+  <div class="muro-head">
+    <div class="muro-badge">🌽 Del Maíz Maya al Conuco Yopaleño</div>
+    <h2>Muro Colaborativo</h2>
+    <p>Comparte un relato o reflexión relacionando un valor del Popol Vuh con tu realidad en la vereda El Morro. Tu aporte fortalece la identidad latinoamericana del aula.</p>
+  </div>
+  <div class="post-input-card">
+    <div class="pic-label">✍️ Tu aporte al muro</div>
+    <div class="pic-type-row">
+      <div class="type-btn sel" onclick="selType(this)"><span>📝</span>Relato</div>
+      <div class="type-btn" onclick="selType(this)"><span>🎙️</span>Audio</div>
+      <div class="type-btn" onclick="selType(this)"><span>🖼️</span>Imagen</div>
+    </div>
+    <textarea class="post-ta" placeholder="Ej: En El Morro, el maíz no es solo alimento... al igual que para los mayas, es el origen de quienes somos. Mi abuelo siembra con el mismo respeto que los dioses del Popol Vuh…"></textarea>
+    <div style="font-size:11px;color:var(--muted);margin-top:10px;margin-bottom:6px">Valor del Popol Vuh que relacionas:</div>
+    <div class="val-tag-row">
+      <div class="val-chip" onclick="toggleV(this)">🌽 Maíz sagrado</div>
+      <div class="val-chip" onclick="toggleV(this)">🌊 Respeto a la naturaleza</div>
+      <div class="val-chip" onclick="toggleV(this)">🦅 Identidad cultural</div>
+      <div class="val-chip" onclick="toggleV(this)">🌙 Cosmovisión maya</div>
+      <div class="val-chip" onclick="toggleV(this)">⚖️ Justicia ancestral</div>
+    </div>
+    <button class="btn-primary" style="margin-top:14px" onclick="postMuro()">Publicar en el Muro 📌</button>
+  </div>
+
+  <div style="padding:0 18px 10px"><div class="sec-title">Aportes del aula — Grado 6°</div></div>
+  <div class="padlet-grid">
+    <div class="ppost ppost-1">
+      <div class="pp-author">👤 María J.</div>
+      <div class="pp-text">El maíz en El Morro es como la masa que formó a los primeros hombres mayas. Sin él, no somos nada.</div>
+      <div class="pp-val">🌽 Maíz sagrado</div>
+      <div class="pp-like">❤️ 8</div>
+    </div>
+    <div class="ppost ppost-2">
+      <div class="pp-author">👤 Carlos D.</div>
+      <div class="pp-text">El Silbón y los señores de Xibalbá me parecen parecidos: los dos castigan a los que no respetan.</div>
+      <div class="pp-val">⚖️ Justicia ancestral</div>
+      <div class="pp-like">❤️ 5</div>
+    </div>
+    <div class="ppost ppost-3">
+      <div class="pp-author">👤 Luisa P.</div>
+      <div class="pp-text">Mi abuela cuida el conuco igual que los mayas cuidaban la milpa. Es lo mismo, solo que aquí en Casanare.</div>
+      <div class="pp-val">🌊 Respeto a la naturaleza</div>
+      <div class="pp-like">❤️ 12</div>
+    </div>
+    <div class="ppost ppost-4">
+      <div class="pp-author">👤 Andrés M.</div>
+      <div class="pp-text">Hunahpú es como el llanero: usa su inteligencia, no la fuerza. Así debemos ser nosotros también.</div>
+      <div class="pp-val">🦅 Identidad cultural</div>
+      <div class="pp-like">❤️ 7</div>
+    </div>
+  </div>
+  <div style="height:80px"></div>
+
+  <nav class="bot-nav">
+    <div class="nav-it" onclick="go('v-dashboard')"><span>🏠</span>Inicio</div>
+    <div class="nav-it" onclick="go('v-ruta')"><span>🗺️</span>Ruta</div>
+    <div class="nav-it" onclick="go('v-quiz')"><span>⚡</span>Retos</div>
+    <div class="nav-it" onclick="go('v-perfil')"><span>🛡️</span>Insignias</div>
+    <div class="nav-it on"><span>📌</span>Muro</div>
+  </nav>
+</div>
+
+<!-- ══ V9 ENCUESTA ══ -->
+<div class="view" id="v-encuesta">
+  <div class="enc-card">
+    <div class="enc-top-badge">🎉 ¡Misión Completada!</div>
+    <h2>Encuesta de Satisfacción</h2>
+    <p>Ayúdanos a mejorar MAYALAB para los estudiantes de El Morro. Solo 1 minuto.</p>
+    <div class="rq">
+      <div class="rl">¿Cómo calificarías la experiencia de aprendizaje?</div>
+      <div class="stars" id="strs">
+        <span class="star" onclick="rate(1)">⭐</span><span class="star" onclick="rate(2)">⭐</span>
+        <span class="star" onclick="rate(3)">⭐</span><span class="star" onclick="rate(4)">⭐</span>
+        <span class="star" onclick="rate(5)">⭐</span>
+      </div>
+    </div>
+    <div class="rq">
+      <div class="rl">¿Qué te pareció el contenido del Popol Vuh?</div>
+      <div class="enc-opts">
+        <div class="ec" onclick="toggleC(this)">Muy claro</div>
+        <div class="ec" onclick="toggleC(this)">Entretenido</div>
+        <div class="ec" onclick="toggleC(this)">Me conectó con Yopal</div>
+        <div class="ec" onclick="toggleC(this)">Difícil</div>
+        <div class="ec" onclick="toggleC(this)">Muy largo</div>
+      </div>
+    </div>
+    <div class="rq">
+      <div class="rl">¿Lo relacionaste con tu vida en El Morro?</div>
+      <div class="enc-opts">
+        <div class="ec" onclick="toggleC(this)">Sí, mucho</div>
+        <div class="ec" onclick="toggleC(this)">Un poco</div>
+        <div class="ec" onclick="toggleC(this)">Todavía no</div>
+      </div>
+    </div>
+    <div class="rq">
+      <div class="rl">Comentario (opcional)</div>
+      <textarea class="enc-ta" placeholder="Escribe aquí tu opinión sobre la app y la temática…"></textarea>
+    </div>
+    <button class="btn-primary btn-gold" onclick="submitEnc()" style="margin-top:4px">Enviar a Google Sheets 📊</button>
+  </div>
+</div>
+
+<!-- ══ V10 FORGOT ══ -->
+<div class="view" id="v-forgot">
+  <div class="fg-card">
+    <div id="fgForm">
+      <div class="fg-ico">🔐</div>
+      <h2>Recupera tu Acceso</h2>
+      <p>Ingresa tu correo y recibirás instrucciones para restablecer tu contraseña de MAYALAB.</p>
+      <div class="fg" style="text-align:left">
+        <label>Correo Electrónico</label>
+        <input type="email" id="fgEmail" placeholder="estudiante@antonionarino.edu.co">
+      </div>
+      <button class="btn-primary" onclick="sendRst()" style="margin-top:4px">Enviar instrucciones ✉️</button>
+      <div class="flink" style="margin-top:14px"><a href="#" onclick="go('v-login');return false">← Volver al inicio</a></div>
+    </div>
+    <div class="succ" id="fgSucc">
+      <div class="succ-ico">✅</div>
+      <div class="succ-msg">¡Instrucciones enviadas!</div>
+      <div class="succ-sub">Revisa tu correo y sigue los pasos para restablecer tu contraseña. Si no llega, consulta a tu docente.</div>
+      <button class="btn-primary" style="margin-top:22px" onclick="go('v-login')">Volver al inicio →</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* NAVIGATION */
+const tabs={
+  'v-login':0,'v-dashboard':1,'v-explora':2,'v-ruta':3,
+  'v-perfil':4,'v-video':5,'v-quiz':6,'v-muro':7,
+  'v-encuesta':8,'v-forgot':9
+};
+function go(id){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  const dtabs=document.querySelectorAll('.dtab');
+  dtabs.forEach((t,i)=>t.classList.toggle('on',i===tabs[id]));
+  window.scrollTo(0,0);
+  if(id==='v-quiz')initQuiz();
+}
+
+/* VIDEO */
+let vidT;
+function startVid(){
+  document.getElementById('playBtn').style.display='none';
+  let p=0;
+  vidT=setInterval(()=>{
+    p+=2;document.getElementById('vp').style.width=p+'%';
+    if(p>=100){clearInterval(vidT);document.getElementById('vidCta').style.display='flex';}
+  },80);
+}
+
+/* QUIZ */
+const Qs=[
+  {t:'¿Por qué Vucub Caquix era considerado arrogante en el Popol Vuh?',
+   o:['Era el más fuerte de Xibalbá','Se creía el Sol y la Luna a la vez','Controlaba las aguas primordiales','Era padre de los Héroes Gemelos'],c:1},
+  {t:'¿Cómo lograron los Héroes Gemelos derrotar a Vucub Caquix?',
+   o:['Con fuerza bruta en batalla','Llamando a los dioses del cielo','Usando el ingenio y la astucia','Con veneno de la selva'],c:2},
+  {t:'¿De qué material crearon los dioses a los seres humanos en el intento final del Popol Vuh?',
+   o:['De barro cocido','De madera resistente','De maíz blanco y amarillo','De jade y obsidiana'],c:2}
+];
+let cQ=0,ans=false;
+function initQuiz(){cQ=0;ans=false;renderQ();}
+function renderQ(){
+  const q=Qs[cQ];
+  document.getElementById('qTag').textContent=`Pregunta ${cQ+1} de ${Qs.length}`;
+  document.getElementById('qTxt').textContent=q.t;
+  document.getElementById('qCtr').textContent=`${cQ+1}/${Qs.length}`;
+  ans=false;
+  const fb=document.getElementById('qFb');fb.className='qfb';
+  document.getElementById('retBtn').style.display='none';
+  document.getElementById('nxtBtn').style.display='none';
+  ['p1','p2','p3'].forEach((id,i)=>{
+    const el=document.getElementById(id);
+    el.className='pill'+(i<cQ?' done':i===cQ?' now':'');
+  });
+  const ol=document.getElementById('qOpts');ol.innerHTML='';
+  const lets=['A','B','C','D'];
+  q.o.forEach((op,i)=>{
+    const d=document.createElement('div');d.className='opt';
+    d.innerHTML=`<div class="opt-let">${lets[i]}</div>${op}`;
+    d.onclick=()=>pick(i,d);ol.appendChild(d);
+  });
+}
+function pick(i,el){
+  if(ans)return;ans=true;
+  const q=Qs[cQ];
+  const fb=document.getElementById('qFb');
+  document.querySelectorAll('.opt').forEach(o=>o.style.pointerEvents='none');
+  if(i===q.c){
+    el.classList.add('ok');
+    fb.className='qfb ok';
+    document.getElementById('fbIco').textContent='✅';
+    document.getElementById('fbTit').textContent='¡Correcto, Guardián!';
+    document.getElementById('fbBod').textContent=cQ<Qs.length-1?'Excelente. Avanza a la siguiente pregunta.':'¡Completaste el cuestionario! Ahora comparte en el muro colaborativo.';
+    const nb=document.getElementById('nxtBtn');nb.style.display='block';
+    if(cQ>=Qs.length-1){nb.textContent='Ver Encuesta 🎉';nb.onclick=()=>go('v-encuesta');}
+    else{nb.textContent='Siguiente Pregunta →';nb.onclick=nxtQ;}
+  } else {
+    el.classList.add('no');
+    document.querySelectorAll('.opt')[q.c].classList.add('ok');
+    fb.className='qfb no';
+    document.getElementById('fbIco').textContent='⚠️';
+    document.getElementById('fbTit').textContent='Respuesta Incorrecta';
+    document.getElementById('fbBod').textContent='Regresa al video y localiza la sección donde se explica este tema del Popol Vuh.';
+    document.getElementById('retBtn').style.display='block';
+  }
+}
+function nxtQ(){cQ++;renderQ();}
+
+/* MURO */
+function selType(el){document.querySelectorAll('.type-btn').forEach(b=>b.classList.remove('sel'));el.classList.add('sel');}
+function toggleV(el){el.classList.toggle('sel');}
+function postMuro(){alert('✅ ¡Tu aporte fue publicado en el Muro Colaborativo!\n\nTu reflexión sobre el Popol Vuh y tu vida en El Morro ha sido registrada para el docente.');}
+
+/* ENCUESTA */
+function rate(n){document.querySelectorAll('.star').forEach((s,i)=>s.classList.toggle('lit',i<n));}
+function toggleC(el){el.classList.toggle('sel');}
+function submitEnc(){
+  alert('✅ ¡Gracias, Guardián!\n\nTus respuestas han sido enviadas a Google Sheets:\n• Respuestas del cuestionario ✓\n• Intentos fallidos registrados ✓\n• Resultado de satisfacción ✓\n• Participación en muro ✓\n\nEl docente podrá monitorear tu progreso.');
+  go('v-dashboard');
+}
+
+/* PASSWORD */
+function sendRst(){
+  const e=document.getElementById('fgEmail').value;
+  if(!e||!e.includes('@')){alert('Ingresa un correo válido.');return;}
+  document.getElementById('fgForm').style.display='none';
+  document.getElementById('fgSucc').style.display='block';
+}
+</script>
+</body>
+</html>
